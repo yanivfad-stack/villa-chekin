@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניהול וילה - צ'ק אין וצ'ק אאוט</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 3px solid #ddd;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #2a5298;
+            border-bottom: 4px solid #2a5298;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .photo-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px dashed #ddd;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .photo-section.id-photos {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .photo-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .photo-btn:hover {
+            background: #1e3c72;
+        }
+
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .photo-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .inspection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .inspection-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+        }
+
+        .inspection-item h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .status-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .status-btn.good {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .status-btn.good.active {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-btn.bad {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .status-btn.bad.active {
+            background: #dc3545;
+            color: white;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 3px solid #ddd;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #2a5298;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3c72;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .summary-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #2196f3;
+            margin-bottom: 30px;
+        }
+
+        .summary-item {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #90caf9;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .tab {
+                padding: 15px 10px;
+                font-size: 1em;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .inspection-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏖️ מערכת ניהול וילה</h1>
+            <p>ניהול מקצועי של צ'ק אין וצ'ק אאוט</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('checkin')">צ'ק אין</button>
+            <button class="tab" onclick="switchTab('checkout')">צ'ק אאוט</button>
+        </div>
+
+        <div class="content">
+            <!-- צק אין -->
+            <div id="checkin" class="tab-pane active">
+                <h2 style="margin-bottom: 30px;">📝 טופס צק אין</h2>
+
+                <div class="form-section">
+                    <h3>פרטי אורח</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>שם מלא *</label>
+                            <input type="text" id="guestName" placeholder="הכנס שם מלא">
+                        </div>
+                        <div class="form-group">
+                            <label>תעודת זהות</label>
+                            <input type="text" id="guestId" placeholder="מספר תעודת זהות">
+                        </div>
+                        <div class="form-group">
+                            <label>טלפון</label>
+                            <input type="tel" id="guestPhone" placeholder="מספר טלפון">
+                        </div>
+                        <div class="form-group">
+                            <label>אימייל</label>
+                            <input type="email" id="guestEmail" placeholder="כתובת אימייל">
+                        </div>
+                        <div class="form-group">
+                            <label>תאריך כניסה</label>
+                            <input type="date" id="checkinDate">
+                        </div>
+                        <div class="form-group">
+                            <label>מספר אורחים *</label>
+                            <select id="numGuests" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                                <option value="">בחר מספר אורחים</option>
+                                <option value="1">1 אורח</option>
+                                <option value="2">2 אורחים</option>
+                                <option value="3">3 אורחים</option>
+                                <option value="4">4 אורחים</option>
+                                <option value="5">5 אורחים</option>
+                                <option value="6">6 אורחים</option>
+                                <option value="7">7 אורחים</option>
+                                <option value="8">8 אורחים</option>
+                                <option value="9">9 אורחים</option>
+                                <option value="10">10 אורחים</option>
+                                <option value="11">11 אורחים</option>
+                                <option value="12">12 אורחים</option>
+                                <option value="13">13 אורחים</option>
+                                <option value="14">14 אורחים</option>
+                                <option value="15">15 אורחים</option>
+                                <option value="16">16 אורחים</option>
+                                <option value="17">17 אורחים</option>
+                                <option value="18">18 אורחים</option>
+                                <option value="19">19 אורחים</option>
+                                <option value="20">20 אורחים</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>תאריך יציאה</label>
+                            <input type="date" id="checkoutDate">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- תקנון אירוח -->
+                <div class="form-section" style="background: #fff3cd; border: 3px solid #ffc107; border-radius: 15px; padding: 25px; margin-bottom: 30px;">
+                    <h3 style="color: #856404; margin-bottom: 20px;">📋 תקנון ומדיניות אירוח בוילה</h3>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 10px; max-height: 400px; overflow-y: auto; border: 2px solid #ffc107; margin-bottom: 20px;">
+                        <p style="font-weight: bold; margin-bottom: 15px;">על מנת שנוכל להעניק חווית אירוח נעימה לכלל אורחינו אנו מקפידים על הכללים הבאים:</p>
+                        
+                        <ol style="line-height: 1.8; padding-right: 20px;">
+                            <li>שעת קבלת הוילה החל מהשעה 13:00</li>
+                            <li>שעת עזיבה - עד 10:00 (בשבת עד שעה מצאת שבת)</li>
+                            <li>אמצעי תשלום - בהעברה בנקאית במזומן</li>
+                            <li>אין כניסה של חיות מחמד לוילה</li>
+                            <li>העישון בוילה אסור</li>
+                            <li>סידרנו עבורכם פינת מנגל מיוחדת, עשיית מנגל אפשרית אך ורק בפינה הייעודית</li>
+                            <li>בשבת - אין למנגל ולהשמיע מוזיקה</li>
+                            <li>אין להוציא מגבות משטח הוילה</li>
+                            <li>על מנת לאפשר מנוחה ובילוי לכלל אורחינו נהוגות אצלנו שעות שקט: אין להשמיע מוזיקה או להרעיש בוילה בין השעות 23:00 ל 07:00</li>
+                            <li>שימו לב, בקרבת הוילה ישנם בתי מגורים פרטיים, כל הרכוש שבתוכם או בסביבתם, בחצרות ובמדשאות הינו רכוש פרטי ואסור בשימוש אורחי הוילה</li>
+                            <li>וילה פרימיום תהא רשאית להפסיק את השהייה באתר לאורח שלא יעמוד בדרישות תקנון זה ו/או חלקן וזאת ללא מתן פיצוי כלשהו לאורח</li>
+                            <li>אין אחראיות על שמירת רכושכם בעת שהותכם בו, אנא שימרו עליו</li>
+                            <li>בעל הוילה לא יהיה אחראי בגין כל נזק, אי נוחות, הפסד, הוצאה או עוגמת נפש, העלולים להיגרם למשתמש או לרכושו או לכל צד שלישי, במישרין או בעקיפין, עקב הכניסה לוילה</li>
+                            <li>בעל הוילה לא ישא באחריות לפעילות בלתי חוקית על ידי משתמש כל שהוא באתר או כל גורם אחר שאינו בשליטתו</li>
+                            <li>בעל הוילה אינו אחראי לטעות שתעשה על ידי המשתמש בהקלדת פרטי ההזמנה, לרבות טעות בתאריך, גיל ו/או מספר המתארחים</li>
+                        </ol>
+
+                        <h4 style="margin-top: 25px; margin-bottom: 15px; color: #856404;">ביטול עסקה:</h4>
+                        <p style="font-weight: bold; margin-bottom: 10px;">ביטול בחריגה מהמועדים הקבועים בחוק:</p>
+                        <p style="margin-bottom: 10px;">במקרה של ביטול אחרי יותר מ-14 יום ממועד ביצוע ההזמנה ו/או פחות מ-7 ימי עסקים למועד מימוש ההזמנה, יחולו הכללים הבאים:</p>
+                        <ul style="line-height: 1.8; padding-right: 20px; margin-top: 10px;">
+                            <li>בביטול עד 30 יום קודם למימוש ההזמנה: לא ייגבו דמי ביטול</li>
+                            <li>בביטול עד שבעה ימים למועד מימוש ההזמנה: יגבו דמי ביטול של 30% מערך ההזמנה</li>
+                            <li>בביטול עד 72 שעות קודם למועד מימוש ההזמנה: יגבו דמי ביטול של 50% מערך ההזמנה</li>
+                            <li>בביטול של 24 שעות ופחות קודם למימוש ההזמנה: יגבו דמי ביטול של 100% מערך ההזמנה</li>
+                        </ul>
+
+                        <h4 style="margin-top: 25px; margin-bottom: 15px; color: #856404;">בריכת השחייה:</h4>
+                        <ul style="line-height: 1.8; padding-right: 20px;">
+                            <li><strong>הכניסה לבריכת השחייה הינה באחריות האורחים בלבד!!</strong></li>
+                            <li>אחריות השימוש בבריכה הינה על המשתמש החתום על טופס זה</li>
+                        </ul>
+
+                        <h4 style="margin-top: 25px; margin-bottom: 15px; color: #856404;">הנחיות נוספות:</h4>
+                        <ul style="line-height: 1.8; padding-right: 20px;">
+                            <li>יש לשמור על הוילה ועל הציוד הנלווה אליה</li>
+                            <li>לבעל הוילה נתונה הזכות להוציא בכל עת את המשתמשים באם יפרו את כללי ההתנהגות ללא החזר כספי</li>
+                            <li>המשתמש יהיה אחראי לכל נזק ותקלה שיגרמו לוילה או לציוד הנלווה אליה</li>
+                        </ul>
+                    </div>
+
+                    <!-- חתימה דיגיטלית -->
+                    <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #ffc107;">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; font-size: 1.1em; cursor: pointer;">
+                                <input type="checkbox" id="termsAccepted" style="width: 25px; height: 25px; margin-left: 15px; cursor: pointer;">
+                                <span><strong>קראתי והבנתי את תקנון האירוח ואני מאשר/ת את התנאים *</strong></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>חתימה דיגיטלית (שם מלא) *</label>
+                            <input type="text" id="digitalSignature" placeholder="הקלד את שמך המלא כחתימה" style="font-family: 'Brush Script MT', cursive; font-size: 1.3em;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>תאריך חתימה</label>
+                            <input type="text" id="signatureDate" readonly style="background: #f0f0f0;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="photo-section id-photos">
+                    <h3>📷 תמונות תעודת זהות</h3>
+                    <p style="margin: 15px 0;">צלם את שני צידי תעודת הזהות</p>
+                    <input type="file" id="idPhotoInput" accept="image/*" multiple style="display: none;">
+                    <button class="photo-btn" onclick="document.getElementById('idPhotoInput').click()">
+                        📷 צלם תעודת זהות
+                    </button>
+                    <div id="idPhotoPreview" class="photo-preview"></div>
+                </div>
+
+                <div class="form-section">
+                    <h3>💳 פרטי כרטיס אשראי (לערבות)</h3>
+                    <div class="alert alert-info">
+                        🔒 המידע נשמר מקומית במכשיר בלבד ולא נשלח לשום מקום
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>מספר כרטיס</label>
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        <div class="form-group">
+                            <label>שם בעל הכרטיס</label>
+                            <input type="text" id="cardName" placeholder="שם כפי שמופיע בכרטיס">
+                        </div>
+                        <div class="form-group">
+                            <label>תוקף</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" id="cardCvv" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🔍 בדיקת איבזור - כניסה</h3>
+                    <div id="checkinInspection" class="inspection-grid"></div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-success" onclick="saveCheckin()">💾 שמור צק אין</button>
+                    <button class="btn btn-primary" onclick="generateReport('checkin')">📄 הפק דוח צק אין</button>
+                </div>
+            </div>
+
+            <!-- צק אאוט -->
+            <div id="checkout" class="tab-pane">
+                <h2 style="margin-bottom: 30px;">📤 טופס צק אאוט</h2>
+
+                <div class="summary-box">
+                    <h3 style="margin-bottom: 15px;">📋 סיכום שהות</h3>
+                    <div id="summaryContent">
+                        <p>אנא השלם תחילה את הצק אין</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🔍 בדיקת איבזור - יציאה</h3>
+                    <div id="checkoutInspection" class="inspection-grid"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>הערות כלליות על השהות</label>
+                    <textarea id="generalNotes" placeholder="הערות כלליות, נזקים, בעיות או הערות חיוביות..." rows="4"></textarea>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-warning" onclick="saveCheckout()">💾 שמור צק אאוט</button>
+                    <button class="btn btn-success" onclick="generateReport('checkout')">📄 דוח צק אאוט</button>
+                    <button class="btn btn-primary" onclick="generateReport('full')">📋 דוח מלא משווה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // משתנים גלובליים
+        let appData = {
+            guest: {},
+            creditCard: {},
+            idPhotos: [],
+            checkinInspection: {},
+            checkoutInspection: {},
+            generalNotes: '',
+            checkinComplete: false,
+            checkoutComplete: false
+        };
+
+        const inspectionItems = [
+            'מטבח פנימי', 'פינת אוכל', 'סלון', 'חדר שינה ראשי',
+            'חדר שינה שני', 'חדר רחצה ראשי', 'שירותי אורחים', 'בריכה',
+            'מטבח חוץ', 'ברביקיו', 'ריהוט גן', 'מיזוג אוויר',
+            'חשמל', 'ניקיון כללי'
+        ];
+
+        // אתחול המערכת
+        function initSystem() {
+            // הגדרת תאריך היום
+            const today = new Date();
+            document.getElementById('checkinDate').valueAsDate = today;
+            document.getElementById('signatureDate').value = today.toLocaleDateString('he-IL');
+            
+            // יצירת רכיבי בדיקה
+            createInspectionItems('checkinInspection', false);
+            createInspectionItems('checkoutInspection', true);
+            
+            // מאזינים לתמונות תעודת זהות
+            document.getElementById('idPhotoInput').addEventListener('change', handleIdPhotos);
+        }
+
+        // החלפת טאבים
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // יצירת רכיבי בדיקה
+        function createInspectionItems(containerId, isCheckout) {
+            const container = document.getElementById(containerId);
+            
+            inspectionItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'inspection-item';
+                itemDiv.innerHTML = `
+                    <h4>${item}</h4>
+                    <div class="status-buttons">
+                        <button class="status-btn good" onclick="setStatus('${item}', 'good', ${isCheckout})">✓ תקין</button>
+                        <button class="status-btn bad" onclick="setStatus('${item}', 'bad', ${isCheckout})">✗ לא תקין</button>
+                    </div>
+                    <textarea placeholder="הערות..." onchange="setNotes('${item}', this.value, ${isCheckout})" 
+                        style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 10px;"></textarea>
+                    <div class="photo-section">
+                        <p>📷 צילום ${item}</p>
+                        <input type="file" id="photo_${item}_${isCheckout}" accept="image/*" multiple style="display: none;" 
+                            onchange="handleItemPhotos('${item}', this.files, ${isCheckout})">
+                        <button class="photo-btn" style="font-size: 14px; padding: 8px 20px;" 
+                            onclick="document.getElementById('photo_${item}_${isCheckout}').click()">📷 צלם</button>
+                        <div id="preview_${item}_${isCheckout}" class="photo-preview"></div>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        // תמונות תעודת זהות
+        function handleIdPhotos(e) {
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const photoId = Date.now() + Math.random();
+                    appData.idPhotos.push({
+                        id: photoId,
+                        data: event.target.result,
+                        name: file.name,
+                        timestamp: new Date().toISOString()
+                    });
+                    displayIdPhotos();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function displayIdPhotos() {
+            const preview = document.getElementById('idPhotoPreview');
+            preview.innerHTML = '';
+            
+            appData.idPhotos.forEach(photo => {
+                const div = document.createElement('div');
+                div.className = 'photo-item';
+                div.innerHTML = `
+                    <img src="${photo.data}" alt="תעודת זהות">
+                    <button class="photo-delete" onclick="removeIdPhoto('${photo.id}')">×</button>
+                `;
+                preview.appendChild(div);
+            });
+        }
+
+        function removeIdPhoto(photoId) {
+            appData.idPhotos = appData.idPhotos.filter(p => p.id !== photoId);
+            displayIdPhotos();
+        }
+
+        // טיפול בתמונות פריטי בדיקה
+        function handleItemPhotos(item, files, isCheckout) {
+            const inspection = isCheckout ? appData.checkoutInspection : appData.checkinInspection;
+            
+            if (!inspection[item]) inspection[item] = {};
+            if (!inspection[item].photos) inspection[item].photos = [];
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const photoId = Date.now() + Math.random();
+                    inspection[item].photos.push({
+                        id: photoId,
+                        data: event.target.result,
+                        name: file.name,
+                        timestamp: new Date().toISOString()
+                    });
+                    displayItemPhotos(item, isCheckout);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function displayItemPhotos(item, isCheckout) {
+            const inspection = isCheckout ? appData.checkoutInspection : appData.checkinInspection;
+            const preview = document.getElementById(`preview_${item}_${isCheckout}`);
+            preview.innerHTML = '';
+            
+            if (inspection[item] && inspection[item].photos) {
+                inspection[item].photos.forEach(photo => {
+                    const div = document.createElement('div');
+                    div.className = 'photo-item';
+                    div.innerHTML = `
+                        <img src="${photo.data}" alt="${item}">
+                        <button class="photo-delete" onclick="removeItemPhoto('${item}', '${photo.id}', ${isCheckout})">×</button>
+                    `;
+                    preview.appendChild(div);
+                });
+            }
+        }
+
+        function removeItemPhoto(item, photoId, isCheckout) {
+            const inspection = isCheckout ? appData.checkoutInspection : appData.checkinInspection;
+            if (inspection[item] && inspection[item].photos) {
+                inspection[item].photos = inspection[item].photos.filter(p => p.id !== photoId);
+                displayItemPhotos(item, isCheckout);
+            }
+        }
+
+        // הגדרת סטטוס
+        function setStatus(item, status, isCheckout) {
+            const inspection = isCheckout ? appData.checkoutInspection : appData.checkinInspection;
+            
+            if (!inspection[item]) inspection[item] = {};
+            inspection[item].status = status;
+            
+            // עדכון UI
+            const container = document.getElementById(isCheckout ? 'checkoutInspection' : 'checkinInspection');
+            const buttons = container.querySelectorAll(`[onclick*="'${item}'"]`);
+            buttons.forEach(btn => {
+                if (btn.classList.contains('status-btn')) {
+                    btn.classList.remove('active');
+                    if ((status === 'good' && btn.classList.contains('good')) ||
+                        (status === 'bad' && btn.classList.contains('bad'))) {
+                        btn.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        // הגדרת הערות
+        function setNotes(item, notes, isCheckout) {
+            const inspection = isCheckout ? appData.checkoutInspection : appData.checkinInspection;
+            if (!inspection[item]) inspection[item] = {};
+            inspection[item].notes = notes;
+        }
+
+        // שמירת צק אין
+        function saveCheckin() {
+            // בדיקת שדות חובה
+            const guestName = document.getElementById('guestName').value;
+            const numGuests = document.getElementById('numGuests').value;
+            const termsAccepted = document.getElementById('termsAccepted').checked;
+            const digitalSignature = document.getElementById('digitalSignature').value;
+
+            if (!guestName) {
+                alert('❌ אנא הזן שם אורח');
+                return;
+            }
+
+            if (!numGuests) {
+                alert('❌ אנא בחר מספר אורחים');
+                return;
+            }
+
+            if (!termsAccepted) {
+                alert('❌ יש לאשר את תקנון האירוח');
+                return;
+            }
+
+            if (!digitalSignature) {
+                alert('❌ יש לחתום על התקנון (הקלד שם מלא)');
+                return;
+            }
+
+            appData.guest = {
+                name: guestName,
+                id: document.getElementById('guestId').value,
+                phone: document.getElementById('guestPhone').value,
+                email: document.getElementById('guestEmail').value,
+                checkinDate: document.getElementById('checkinDate').value,
+                checkoutDate: document.getElementById('checkoutDate').value,
+                numGuests: numGuests
+            };
+
+            appData.terms = {
+                accepted: termsAccepted,
+                signature: digitalSignature,
+                signatureDate: document.getElementById('signatureDate').value
+            };
+
+            appData.creditCard = {
+                number: document.getElementById('cardNumber').value,
+                name: document.getElementById('cardName').value,
+                expiry: document.getElementById('cardExpiry').value,
+                cvv: document.getElementById('cardCvv').value
+            };
+
+            appData.checkinComplete = true;
+            updateSummary();
+            alert('✅ צק אין נשמר בהצלחה!');
+        }
+
+        // שמירת צק אאוט
+        function saveCheckout() {
+            if (!appData.checkinComplete) {
+                alert('אנא השלם תחילה את הצק אין');
+                return;
+            }
+
+            appData.generalNotes = document.getElementById('generalNotes').value;
+            appData.checkoutComplete = true;
+            alert('✅ צק אאוט נשמר בהצלחה!');
+        }
+
+        // עדכון סיכום
+        function updateSummary() {
+            const summary = document.getElementById('summaryContent');
+            summary.innerHTML = `
+                <div class="summary-item"><strong>אורח:</strong> ${appData.guest.name}</div>
+                <div class="summary-item"><strong>מספר אורחים:</strong> ${appData.guest.numGuests}</div>
+                <div class="summary-item"><strong>ת.ז:</strong> ${appData.guest.id || 'לא הוזן'}</div>
+                <div class="summary-item"><strong>טלפון:</strong> ${appData.guest.phone || 'לא הוזן'}</div>
+                <div class="summary-item"><strong>אימייל:</strong> ${appData.guest.email || 'לא הוזן'}</div>
+                <div class="summary-item"><strong>כניסה:</strong> ${appData.guest.checkinDate}</div>
+                <div class="summary-item"><strong>יציאה:</strong> ${appData.guest.checkoutDate || 'לא הוגדר'}</div>
+                <div class="summary-item"><strong>תמונות ת.ז:</strong> ${appData.idPhotos.length}</div>
+                <div class="summary-item"><strong>כרטיס:</strong> ${appData.creditCard.number ? '****' + appData.creditCard.number.slice(-4) : 'לא הוזן'}</div>
+                <div class="summary-item"><strong>תקנון:</strong> <span style="color: green;">✓ אושר וחתום</span></div>
+            `;
+        }
+
+        // יצירת דוח
+        function generateReport(type) {
+            if (!appData.checkinComplete) {
+                alert('אנא השלם תחילה את הצק אין');
+                return;
+            }
+
+            const now = new Date();
+            const titles = {
+                checkin: 'דוח צק אין',
+                checkout: 'דוח צק אאוט',
+                full: 'דוח מלא משווה'
+            };
+
+            // בניית HTML לבדיקות
+            function buildInspectionHTML(inspection, title) {
+                let html = `<div style="margin-bottom: 40px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; border-bottom: 3px solid #3498db; padding-bottom: 10px;">${title}</h3>`;
+
+                inspectionItems.forEach(item => {
+                    const data = inspection[item] || {};
+                    let statusHTML = '';
+                    let borderColor = '#6c757d';
+
+                    if (data.status === 'good') {
+                        statusHTML = '<span style="background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;">✓ תקין</span>';
+                        borderColor = '#28a745';
+                    } else if (data.status === 'bad') {
+                        statusHTML = '<span style="background: #dc3545; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;">✗ לא תקין</span>';
+                        borderColor = '#dc3545';
+                    } else {
+                        statusHTML = '<span style="background: #6c757d; color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;">⏳ לא נבדק</span>';
+                    }
+
+                    let photosHTML = '';
+                    if (data.photos && data.photos.length > 0) {
+                        photosHTML = `<div style="margin-top: 15px;">
+                            <strong style="color: #495057;">תמונות (${data.photos.length}):</strong>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 12px;">`;
+                        
+                        data.photos.forEach((photo, idx) => {
+                            photosHTML += `<div style="border: 2px solid #dee2e6; border-radius: 10px; overflow: hidden; background: white;">
+                                <img src="${photo.data}" style="width: 100%; height: 140px; object-fit: cover;" alt="${item} ${idx + 1}">
+                                <div style="padding: 10px; background: #f8f9fa; font-size: 12px; text-align: center;">
+                                    <strong>תמונה ${idx + 1}</strong><br>
+                                    <small>${new Date(photo.timestamp).toLocaleString('he-IL')}</small>
+                                </div>
+                            </div>`;
+                        });
+                        photosHTML += '</div></div>';
+                    }
+
+                    html += `<div style="margin-bottom: 25px; padding: 20px; border: 3px solid ${borderColor}; border-radius: 12px; background: #f8f9fa; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap;">
+                            <h4 style="margin: 0; font-size: 1.3em; color: ${borderColor};">${item}</h4>
+                            ${statusHTML}
+                        </div>
+                        ${data.notes ? `<div style="margin-bottom: 12px; padding: 12px; background: white; border-radius: 8px; border-right: 4px solid ${borderColor};"><strong style="color: #495057;">הערות:</strong> ${data.notes}</div>` : ''}
+                        ${photosHTML}
+                    </div>`;
+                });
+
+                html += '</div>';
+                return html;
+            }
+
+            // בניית תמונות תעודת זהות
+            const idPhotosHTML = appData.idPhotos.length > 0 ? `
+                <div style="margin-bottom: 40px; padding: 25px; background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 15px; border: 3px solid #2196f3;">
+                    <h3 style="color: #1565c0; margin-bottom: 25px; font-size: 1.8em;">📷 תמונות תעודת זהות (${appData.idPhotos.length})</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        ${appData.idPhotos.map((photo, i) => `
+                            <div style="border: 4px solid #1976d2; border-radius: 15px; overflow: hidden; background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
+                                <img src="${photo.data}" style="width: 100%; height: 250px; object-fit: cover;" alt="תעודת זהות ${i + 1}">
+                                <div style="padding: 15px; background: #f8f9fa;">
+                                    <strong style="font-size: 1.1em; color: #1565c0;">צד ${i + 1}</strong><br>
+                                    <small style="color: #666;">צולם: ${new Date(photo.timestamp).toLocaleString('he-IL')}</small>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : '<div style="padding: 20px; background: #fff3cd; border: 2px dashed #ffc107; border-radius: 10px; text-align: center;"><h3>תמונות תעודת זהות</h3><p style="color: #dc3545; font-weight: bold;">❌ לא צולמו תמונות</p></div>';
+
+            // HTML מלא
+            const reportHTML = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${titles[type]} - ${appData.guest.name}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            margin: -40px -40px 40px -40px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid #dee2e6;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .info-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .info-card p {
+            margin: 8px 0;
+            font-size: 1.05em;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        .comparison > div {
+            padding: 25px;
+            border: 3px solid #dee2e6;
+            border-radius: 15px;
+            background: #fafafa;
+        }
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>${titles[type]}</h1>
+            <p style="font-size: 1.2em; margin: 10px 0;">מערכת ניהול וילה מקצועית</p>
+            <p>נוצר בתאריך: ${now.toLocaleDateString('he-IL')} בשעה ${now.toLocaleTimeString('he-IL')}</p>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card">
+                <h3>👤 פרטי אורח</h3>
+                <p><strong>שם מלא:</strong> ${appData.guest.name}</p>
+                <p><strong>מספר אורחים:</strong> ${appData.guest.numGuests}</p>
+                <p><strong>תעודת זהות:</strong> ${appData.guest.id || 'לא הוזן'}</p>
+                <p><strong>טלפון:</strong> ${appData.guest.phone || 'לא הוזן'}</p>
+                <p><strong>אימייל:</strong> ${appData.guest.email || 'לא הוזן'}</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>📅 פרטי שהות</h3>
+                <p><strong>תאריך כניסה:</strong> ${appData.guest.checkinDate}</p>
+                <p><strong>תאריך יציאה:</strong> ${appData.guest.checkoutDate || 'לא הוגדר'}</p>
+                <p><strong>משך שהות:</strong> ${appData.guest.checkoutDate ? 
+                    Math.ceil((new Date(appData.guest.checkoutDate) - new Date(appData.guest.checkinDate)) / (1000 * 60 * 60 * 24)) + ' ימים' 
+                    : 'לא הוגדר'}</p>
+                <p><strong>תמונות ת.ז:</strong> ${appData.idPhotos.length} תמונות</p>
+            </div>
+
+            <div class="info-card">
+                <h3>💳 פרטי ערבות</h3>
+                <p><strong>כרטיס אשראי:</strong> ${appData.creditCard.number ? '****' + appData.creditCard.number.slice(-4) : 'לא הוזן'}</p>
+                <p><strong>בעל הכרטיס:</strong> ${appData.creditCard.name || 'לא הוזן'}</p>
+                <p><strong>תוקף:</strong> ${appData.creditCard.expiry || 'לא הוזן'}</p>
+                <p style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 8px; font-size: 0.9em;">
+                    <strong>🔒 הערה:</strong> מידע מוצפן ומאובטח
+                </p>
+            </div>
+        </div>
+
+        ${idPhotosHTML}
+
+        ${type === 'full' ? `
+            <div style="margin: 50px 0;">
+                <h2 style="text-align: center; font-size: 2.2em; color: #2c3e50; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px;">
+                    📊 השוואת מצב כניסה ויציאה
+                </h2>
+                <div class="comparison">
+                    <div>${buildInspectionHTML(appData.checkinInspection, '🔵 בדיקת כניסה')}</div>
+                    <div>${buildInspectionHTML(appData.checkoutInspection, '🔴 בדיקת יציאה')}</div>
+                </div>
+            </div>
+        ` : `
+            <div style="margin: 40px 0;">
+                ${buildInspectionHTML(
+                    type === 'checkin' ? appData.checkinInspection : appData.checkoutInspection,
+                    type === 'checkin' ? '🔵 בדיקת כניסה' : '🔴 בדיקת יציאה'
+                )}
+            </div>
+        `}
+
+        ${appData.generalNotes && type !== 'checkin' ? `
+            <div style="margin: 40px 0; padding: 25px; background: linear-gradient(135deg, #fff3cd, #ffeaa7); border: 3px solid #ffc107; border-radius: 15px;">
+                <h3 style="color: #856404; font-size: 1.8em; margin-bottom: 15px;">📝 הערות כלליות</h3>
+                <p style="font-size: 1.15em; line-height: 1.6; color: #333; white-space: pre-wrap;">${appData.generalNotes}</p>
+            </div>
+        ` : ''}
+
+        <div style="margin: 40px 0; padding: 25px; background: linear-gradient(135deg, #d4edda, #c3e6cb); border: 3px solid #28a745; border-radius: 15px;">
+            <h3 style="color: #155724; font-size: 1.8em; margin-bottom: 15px;">✍️ אישור והסכמה</h3>
+            <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                <p style="font-size: 1.15em; line-height: 1.6; margin-bottom: 10px;">
+                    <strong>האורח אישר כי קרא והבין את תקנון האירוח</strong>
+                </p>
+                <p style="font-size: 1.05em; margin-bottom: 8px;">
+                    <strong>חתימה דיגיטלית:</strong> <span style="font-family: 'Brush Script MT', cursive; font-size: 1.5em; color: #2c3e50;">${appData.terms?.signature || 'לא נחתם'}</span>
+                </p>
+                <p style="font-size: 1.05em;">
+                    <strong>תאריך אישור:</strong> ${appData.terms?.signatureDate || 'לא זמין'}
+                </p>
+            </div>
+            <p style="font-size: 0.95em; color: #666; text-align: center;">
+                האורח מאשר כי הוא אחראי לשמירה על הוילה ולכל נזק שייגרם במהלך השהות
+            </p>
+        </div>
+
+        <div style="margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 15px; text-align: center; border: 3px solid #2196f3;">
+            <p style="font-size: 1.2em; margin-bottom: 10px;"><strong>🏖️ מערכת ניהול וילה דיגיטלית</strong></p>
+            <p style="font-size: 1em; color: #666;">זמן יצירת הדוח: ${now.toLocaleString('he-IL')}</p>
+            <p style="font-size: 0.9em; color: #666; margin-top: 10px;">דוח זה נוצר באופן אוטומטי ומכיל את כל פרטי השהות והבדיקות</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+            // הורדת הדוח
+            const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${type}_${appData.guest.name.replace(/\s+/g, '_')}_${now.toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert(`✅ ${titles[type]} הופק בהצלחה והורד למחשב!\nשם קובץ: ${a.download}`);
+        }
+
+        // הפעלה בטעינת העמוד
+        window.addEventListener('DOMContentLoaded', initSystem);
+    </script>
+</body>
+</html>
