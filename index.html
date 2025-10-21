@@ -581,6 +581,9 @@
             checkoutComplete: false
         };
 
+        // רשימת כל הצ'ק אינים
+        let allCheckins = [];
+
         const inspectionItems = [
             'מטבח פנימי', 'פינת אוכל', 'סלון', 'חדר שינה ראשי',
             'חדר שינה שני', 'חדר רחצה ראשי', 'שירותי אורחים', 'בריכה',
@@ -588,8 +591,127 @@
             'חשמל', 'ניקיון כללי'
         ];
 
+        // *** פונקציות שמירה וטעינה מ-LocalStorage ***
+        
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('currentCheckin', JSON.stringify(appData));
+                localStorage.setItem('allCheckins', JSON.stringify(allCheckins));
+                console.log('נשמר ב-LocalStorage');
+            } catch (e) {
+                console.error('שגיאה בשמירה:', e);
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const savedData = localStorage.getItem('currentCheckin');
+                const savedCheckins = localStorage.getItem('allCheckins');
+                
+                if (savedData) {
+                    appData = JSON.parse(savedData);
+                    console.log('נטען מ-LocalStorage');
+                }
+                
+                if (savedCheckins) {
+                    allCheckins = JSON.parse(savedCheckins);
+                    updateCheckinsList();
+                }
+            } catch (e) {
+                console.error('שגיאה בטעינה:', e);
+            }
+        }
+
+        function clearLocalStorage() {
+            if (confirm('האם אתה בטוח שברצונך למחוק את כל הנתונים?')) {
+                localStorage.removeItem('currentCheckin');
+                localStorage.removeItem('allCheckins');
+                location.reload();
+            }
+        }
+
+        // *** פונקציות גיבוי והורדה ***
+        
+        function downloadBackup() {
+            const backup = {
+                currentCheckin: appData,
+                allCheckins: allCheckins,
+                backupDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `villa-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ קובץ גיבוי הורד בהצלחה!');
+        }
+
+        function loadBackup(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backup = JSON.parse(e.target.result);
+                    
+                    if (backup.currentCheckin) {
+                        appData = backup.currentCheckin;
+                    }
+                    
+                    if (backup.allCheckins) {
+                        allCheckins = backup.allCheckins;
+                    }
+                    
+                    saveToLocalStorage();
+                    location.reload();
+                    alert('✅ גיבוי נטען בהצלחה!');
+                } catch (err) {
+                    alert('❌ שגיאה בקריאת קובץ הגיבוי');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // *** ניהול רשימת צ'ק אינים ***
+        
+        function updateCheckinsList() {
+            const select = document.getElementById('selectCheckin');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">בחר צ\'ק אין קודם...</option>';
+            
+            allCheckins.forEach((checkin, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${checkin.guest.name} - ${checkin.guest.checkinDate} (${checkin.guest.numGuests || 0} אורחים)`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadSelectedCheckin() {
+            const select = document.getElementById('selectCheckin');
+            const index = select.value;
+            
+            if (index === '') return;
+            
+            const selectedCheckin = allCheckins[index];
+            appData = JSON.parse(JSON.stringify(selectedCheckin)); // עותק עמוק
+            
+            saveToLocalStorage();
+            updateSummary();
+            
+            alert('✅ צ\'ק אין נטען! כעת תוכל לבצע צ\'ק אאוט');
+        }
+
         // אתחול המערכת
         function initSystem() {
+            // טעינה מ-LocalStorage
+            loadFromLocalStorage();
+            
             // הגדרת תאריך היום
             const today = new Date();
             document.getElementById('checkinDate').valueAsDate = today;
@@ -601,6 +723,32 @@
             
             // מאזינים לתמונות תעודת זהות
             document.getElementById('idPhotoInput').addEventListener('change', handleIdPhotos);
+            
+            // מאזין לקובץ גיבוי
+            const backupInput = document.getElementById('backupInput');
+            if (backupInput) {
+                backupInput.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        loadBackup(e.target.files[0]);
+                    }
+                });
+            }
+            
+            // עדכון רשימת צ'ק אינים
+            updateCheckinsList();
+            
+            // אם יש צ'ק אין נוכחי - עדכן את הסיכום
+            if (appData.checkinComplete) {
+                updateSummary();
+            }
+            
+            // התראה לפני סגירת החלון
+            window.addEventListener('beforeunload', function(e) {
+                if (appData.checkinComplete && !appData.checkoutComplete) {
+                    e.preventDefault();
+                    e.returnValue = 'יש לך צ\'ק אין פעיל. האם אתה בטוח שברצונך לסגור?';
+                }
+            });
         }
 
         // החלפת טאבים
